@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "953646502179",
+    "project_id": "og-scanner",
+    "storage_bucket": "og-scanner.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:953646502179:android:7c7d3ca2a0f6b5c5b13c96",
+        "android_client_info": {
+          "package_name": "com.dzworks.ogscanner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "953646502179-gmq4jn511kgdlskkn17qhdrmk9qmm0kk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCP453U1ua8jlDIrll82PUXgfQqJjYU61Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "953646502179-gmq4jn511kgdlskkn17qhdrmk9qmm0kk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

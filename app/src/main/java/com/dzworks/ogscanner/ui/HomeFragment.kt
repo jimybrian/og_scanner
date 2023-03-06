@@ -68,8 +68,6 @@ class HomeFragment : Fragment() {
     var cameraWidth: Int = 0
     var xOffset: Int = 0
     var yOffset: Int = 0
-    var boxWidth: Int = 0
-    var boxHeight: Int = 0
 
     private var cameraProviderFuture: ListenableFuture<ProcessCameraProvider>? = null
     private val executor: ExecutorService = Executors.newSingleThreadExecutor()
@@ -128,7 +126,7 @@ class HomeFragment : Fragment() {
         imageAnalysis.setAnalyzer(executor, ImageAnalysis.Analyzer { image ->
             //changing normal degrees into Firebase rotation
             val rotationDegrees = degreesToFirebaseRotation(image.imageInfo.rotationDegrees)
-            if (image?.image == null) {
+            if (image.image == null) {
                 return@Analyzer
             }
             //Getting a FirebaseVisionImage object using the Image object and rotationDegrees
@@ -136,7 +134,7 @@ class HomeFragment : Fragment() {
             val images: FirebaseVisionImage =
                 FirebaseVisionImage.fromMediaImage(mediaImage!!, rotationDegrees)
             //Getting bitmap from FirebaseVisionImage Object
-            val bmp: Bitmap = images.getBitmap()
+            val bmp: Bitmap = images.bitmap
             //Getting the values for cropping
             val displaymetrics = DisplayMetrics()
             activity?.windowManager?.defaultDisplay?.getMetrics(displaymetrics)
@@ -161,18 +159,18 @@ class HomeFragment : Fragment() {
             yOffset = top
 
             //Creating new cropped bitmap
-            val bitmap = Bitmap.createBitmap(bmp, left, top, boxWidth, boxHeight)
+//            val bitmap = Bitmap.createBitmap(bmp, left, top, width, height)
             //initializing FirebaseVisionTextRecognizer object
             val detector: FirebaseVisionTextRecognizer = FirebaseVision.getInstance().onDeviceTextRecognizer
             //Passing FirebaseVisionImage Object created from the cropped bitmap
             val result: Task<FirebaseVisionText> =
-                detector.processImage(FirebaseVisionImage.fromBitmap(bitmap))
+                detector.processImage(FirebaseVisionImage.fromBitmap(bmp))
                     .addOnSuccessListener { firebaseVisionText -> // Task completed successfully
                         textView = binding.txSelectedText
                         //getting decoded text
                         val text: String = firebaseVisionText?.text.orEmpty()
                         //Setting the decoded text in the texttview
-                        textView!!.text = text
+                        textView!!.text = text.filter { it.isDigit() }.take(6)
                         //for getting blocks and line elements
                         for (block in firebaseVisionText?.textBlocks.orEmpty()) {
                             val blockText: String = block.text
@@ -249,17 +247,15 @@ class HomeFragment : Fragment() {
         canvas?.drawColor(0, PorterDuff.Mode.CLEAR)
         //border's properties
         paint = Paint()
-        paint?.setStyle(Paint.Style.STROKE)
-        paint?.setColor(color)
-        paint?.setStrokeWidth(5F)
+        paint?.style = Paint.Style.STROKE
+        paint?.color = color
+        paint?.strokeWidth = 5F
         left = width / 2 - diameter / 3
         top = height / 2 - diameter / 3
         right = width / 2 + diameter / 3
         bottom = height / 2 + diameter / 3
         xOffset = left
         yOffset = top
-        boxHeight = bottom - top
-        boxWidth = right - left
         //Changing the value of x in diameter/x will change the size of the box ; inversely proportionate to x
         canvas?.drawRect(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat(), paint!!)
         holder!!.unlockCanvasAndPost(canvas)
